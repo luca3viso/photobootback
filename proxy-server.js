@@ -7,7 +7,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
-
+module.exports = app
+console.log('Server starting...');
 const app = express();
 
 const API_KEY = process.env.API_KEY || 'faa557c1-c9dc-4b36-86d7-aa1f821448e1';
