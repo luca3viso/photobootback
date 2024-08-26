@@ -31,11 +31,13 @@ app.use(cors({
 
 app.use(express.json({ limit: '50mb' }));
 
+app.get('/', (req, res) => {
+  res.send('Photobooth backend server is running!');
+});
+
 app.post('/generate-and-send', async (req, res) => {
   try {
-    // Placeholder for image generation logic
     const urlImmagineGenerata = 'URL_DELL_IMMAGINE_GENERATA';
-
     const mailOptions = {
       from: process.env.EMAIL_USER || 'totemai.photoservice@gmail.com',
       to: req.body.email,
@@ -48,9 +50,7 @@ app.post('/generate-and-send', async (req, res) => {
         }
       ]
     };
-
     await transporter.sendMail(mailOptions);
-
     res.json({ success: true, message: 'Immagine generata e inviata via email' });
   } catch (error) {
     console.error('Errore:', error);
@@ -82,22 +82,16 @@ app.post('/upload-image', async (req, res) => {
   try {
     const imageData = req.body.imageData;
     const imageBuffer = Buffer.from(imageData.split(',')[1], 'base64');
-
     if (imageBuffer.length > MAX_IMAGE_SIZE) {
       return res.status(400).json({ error: 'Image size exceeds 50MB limit' });
     }
-
     console.log('Image size:', imageBuffer.length, 'bytes');
-
     const presignedUrlResponse = await axios.post('https://cloud.leonardo.ai/api/rest/v1/init-image',
       { extension: 'jpg' },
       { headers: { Authorization: `Bearer ${API_KEY}` } }
     );
-
     console.log('Presigned URL response:', JSON.stringify(presignedUrlResponse.data, null, 2));
-
     const { url, fields, id: imageId } = presignedUrlResponse.data.uploadInitImage;
-
     const formData = new FormData();
     const parsedFields = JSON.parse(fields);
     Object.entries(parsedFields).forEach(([key, value]) => {
@@ -107,7 +101,6 @@ app.post('/upload-image', async (req, res) => {
       filename: 'image.jpg',
       contentType: 'image/jpeg',
     });
-
     const s3UploadResponse = await axios.post(url, formData, {
       headers: {
         ...formData.getHeaders(),
@@ -116,7 +109,6 @@ app.post('/upload-image', async (req, res) => {
       maxContentLength: Infinity,
       maxBodyLength: Infinity
     });
-
     console.log('S3 upload response status:', s3UploadResponse.status);
     console.log('Upload su S3 completato con successo');
     res.json({ imageId: imageId });
@@ -138,7 +130,6 @@ app.get('/view-users', async (req, res) => {
     const users = JSON.parse(data);
     const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
       .map(email => users.find(u => u.email === email));
-
     const html = `
       <!DOCTYPE html>
       <html lang="it">
