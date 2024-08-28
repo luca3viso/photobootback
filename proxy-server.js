@@ -63,23 +63,17 @@ app.post('/generate-and-send', async (req, res) => {
 });
 
 app.post('/save-user', async (req, res) => {
-  try {
-    const { name, surname, email } = req.body;
-    let users = [];
     try {
-      const data = await fs.readFile(DB_FILE, 'utf8');
-      users = JSON.parse(data);
+      const { name, surname, email } = req.body;
+      await kv.hset('users', { [email]: JSON.stringify({ name, surname, email }) });
+      console.error('User saved:', await kv.hget('users', email));
+      res.json({ success: true, message: 'User data saved successfully' });
     } catch (error) {
-      // File doesn't exist or is empty, start with an empty array
+      console.error('Error saving user:', error);
+      res.status(500).json({ error: 'Error saving user data' });
     }
-    users.push({ name, surname, email });
-    await fs.writeFile(DB_FILE, JSON.stringify(users, null, 2));
-    res.json({ success: true, message: 'User data saved successfully' });
-  } catch (error) {
-    console.error('Error saving user:', error);
-    res.status(500).json({ error: 'Error saving user data' });
-  }
-});
+  });
+  
 
 app.post('/upload-image', async (req, res) => {
   console.log('Richiesta di upload ricevuta');
