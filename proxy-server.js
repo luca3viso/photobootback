@@ -132,21 +132,14 @@ app.post('/validate-email', (req, res) => {
 
 
 app.get('/view-users', async (req, res) => {
-    console.log('Inizio della richiesta /view-users');
+    console.error('Inizio della richiesta /view-users');
     try {
-      console.log('Tentativo di recupero degli utenti dal database KV');
       const users = await kv.hgetall('users');
-      console.log('Dati recuperati dal KV:', users);
+      console.error('Dati recuperati dal KV:', JSON.stringify(users));
   
-      if (!users || Object.keys(users).length === 0) {
-        console.log('Nessun utente trovato nel database');
-        return res.status(404).send('Nessun utente trovato');
-      }
-  
-      console.log('Elaborazione dei dati degli utenti');
       const uniqueUsers = Object.values(users).map(JSON.parse);
-      console.log('Utenti elaborati:', uniqueUsers);
-      
+      console.error('Utenti elaborati:', uniqueUsers);
+  
       const html = `
         <!DOCTYPE html>
         <html lang="it">
@@ -181,13 +174,14 @@ app.get('/view-users', async (req, res) => {
         </body>
         </html>
       `;
-      console.log('Invio della risposta HTML');
-    res.send(html);
-  } catch (error) {
-    console.error('Errore dettagliato nel recupero degli utenti:', error);
-    res.status(500).send('Error fetching user data');
-  }
-});
+      console.error('Invio della risposta HTML');
+      res.send(html);
+    } catch (error) {
+      console.error('Errore dettagliato nel recupero degli utenti:', error.message, error.stack);
+      res.status(500).send('Error fetching user data');
+    }
+  });
+  
   
 
 module.exports = app;
