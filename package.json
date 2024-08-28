@@ -11,8 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@vercel/kv": "^2.0.0",
     "axios": "^1.7.5",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "email-validator": "^2.0.4",
     "express": "^4.19.2",
     "ioredis": "^5.4.1",

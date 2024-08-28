@@ -9,7 +9,8 @@ const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
 const Redis = require('ioredis');
-const redis = new Redis(process.env.REDIS_URL);
+const redis = new Redis(process.env.KV_URL);
+require('dotenv').config();
 
 console.log('Server starting...');
 
