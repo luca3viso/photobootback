@@ -132,9 +132,20 @@ app.post('/validate-email', (req, res) => {
 
 
 app.get('/view-users', async (req, res) => {
+    console.log('Inizio della richiesta /view-users');
     try {
+      console.log('Tentativo di recupero degli utenti dal database KV');
       const users = await kv.hgetall('users');
+      console.log('Dati recuperati dal KV:', users);
+  
+      if (!users || Object.keys(users).length === 0) {
+        console.log('Nessun utente trovato nel database');
+        return res.status(404).send('Nessun utente trovato');
+      }
+  
+      console.log('Elaborazione dei dati degli utenti');
       const uniqueUsers = Object.values(users).map(JSON.parse);
+      console.log('Utenti elaborati:', uniqueUsers);
       
       const html = `
         <!DOCTYPE html>
@@ -170,12 +181,13 @@ app.get('/view-users', async (req, res) => {
         </body>
         </html>
       `;
-      res.send(html);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      res.status(500).send('Error fetching user data');
-    }
-  });
+      console.log('Invio della risposta HTML');
+    res.send(html);
+  } catch (error) {
+    console.error('Errore dettagliato nel recupero degli utenti:', error);
+    res.status(500).send('Error fetching user data');
+  }
+});
   
 
 module.exports = app;
