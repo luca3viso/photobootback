@@ -127,7 +127,7 @@ app.post('/validate-email', (req, res) => {
 
 app.get('/view-users', async (req, res) => {
   try {
-    const response = await axios.get('https://photobooth-chi.vercel.app/src/users.json');
+    const response = await axios.get('https://photobooth-chi.vercel.app/users.json');
     const users = response.data;
     const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
       .map(email => users.find(u => u.email === email));
