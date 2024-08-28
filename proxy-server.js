@@ -124,7 +124,6 @@ app.post('/validate-email', (req, res) => {
   res.json({ valid: isValid, message: isValid ? 'Email is valid' : 'Email is not valid' });
 });
 
-const axios = require('axios');
 
 app.get('/view-users', async (req, res) => {
   try {
