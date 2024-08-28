@@ -124,12 +124,15 @@ app.post('/validate-email', (req, res) => {
   res.json({ valid: isValid, message: isValid ? 'Email is valid' : 'Email is not valid' });
 });
 
+const axios = require('axios');
+
 app.get('/view-users', async (req, res) => {
   try {
-    const data = await fs.readFile(DB_FILE, 'utf8');
-    const users = JSON.parse(data);
+    const response = await axios.get('https://photobooth-chi.vercel.app/src/users.json');
+    const users = response.data;
     const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
       .map(email => users.find(u => u.email === email));
+    
     const html = `
       <!DOCTYPE html>
       <html lang="it">
@@ -166,9 +169,10 @@ app.get('/view-users', async (req, res) => {
     `;
     res.send(html);
   } catch (error) {
-    console.error('Error reading users:', error);
-    res.status(500).send('Error reading user data');
+    console.error('Error fetching users:', error);
+    res.status(500).send('Error fetching user data');
   }
 });
+
 
 module.exports = app;
