@@ -9,7 +9,7 @@ const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
 const Redis = require('ioredis');
-const { kv } = require('@vercel/kv');
+
 const redis = new Redis(process.env.KV_URL);
 require('dotenv').config();
 
@@ -129,7 +129,9 @@ app.post('/validate-email', (req, res) => {
 });
 
 
-aapp.get('/view-users', async (req, res) => {
+
+
+app.get('/view-users', async (req, res) => {
     try {
       const users = await kv.hgetall('users');
       const uniqueUsers = Object.values(users).map(JSON.parse);
