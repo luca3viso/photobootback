@@ -126,52 +126,51 @@ app.post('/validate-email', (req, res) => {
 
 
 app.get('/view-users', async (req, res) => {
-  try {
-    const response = await axios.get('https://photobooth-chi.vercel.app/users.json');
-    const users = response.data;
-    const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
-      .map(email => users.find(u => u.email === email));
-    
-    const html = `
-      <!DOCTYPE html>
-      <html lang="it">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Utenti Registrati</title>
-        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-      </head>
-      <body class="bg-gray-100">
-        <div class="container mx-auto px-4 py-8">
-          <h1 class="text-3xl font-bold mb-6">Utenti Registrati</h1>
-          <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead class="bg-gray-200 text-gray-700">
-              <tr>
-                <th class="py-3 px-4 text-left">Nome</th>
-                <th class="py-3 px-4 text-left">Cognome</th>
-                <th class="py-3 px-4 text-left">Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${uniqueUsers.map(user => `
-                <tr class="border-b border-gray-200 hover:bg-gray-100">
-                  <td class="py-3 px-4">${user.name}</td>
-                  <td class="py-3 px-4">${user.surname}</td>
-                  <td class="py-3 px-4">${user.email}</td>
+    try {
+      const response = await axios.get('https://photobooth-chi.vercel.app/src/users.json');
+      const users = response.data;
+      const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
+        .map(email => users.find(u => u.email === email));
+      
+      const html = `
+        <!DOCTYPE html>
+        <html lang="it">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Utenti Registrati</title>
+          <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-gray-100">
+          <div class="container mx-auto px-4 py-8">
+            <h1 class="text-3xl font-bold mb-6">Utenti Registrati</h1>
+            <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+              <thead class="bg-gray-200 text-gray-700">
+                <tr>
+                  <th class="py-3 px-4 text-left">Nome</th>
+                  <th class="py-3 px-4 text-left">Cognome</th>
+                  <th class="py-3 px-4 text-left">Email</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </body>
-      </html>
-    `;
-    res.send(html);
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).send('Error fetching user data');
-  }
-});
-
-
+              </thead>
+              <tbody>
+                ${uniqueUsers.map(user => `
+                  <tr class="border-b border-gray-200 hover:bg-gray-100">
+                    <td class="py-3 px-4">${user.name}</td>
+                    <td class="py-3 px-4">${user.surname}</td>
+                    <td class="py-3 px-4">${user.email}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
+        </html>
+      `;
+      res.send(html);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).send('Error fetching user data');
+    }
+  });
+  
 module.exports = app;
