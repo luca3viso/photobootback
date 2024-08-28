@@ -8,6 +8,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
+const Redis = require('ioredis');
+const redis = new Redis(process.env.REDIS_URL);
 
 console.log('Server starting...');
 
@@ -127,10 +129,8 @@ app.post('/validate-email', (req, res) => {
 
 app.get('/view-users', async (req, res) => {
     try {
-      const data = await fs.readFile(DB_FILE, 'utf8');
-      const users = JSON.parse(data);
-      const uniqueUsers = Array.from(new Set(users.map(u => u.email)))
-        .map(email => users.find(u => u.email === email));
+      const users = await redis.hgetall('users');
+      const uniqueUsers = Object.values(users).map(JSON.parse);
   
       const html = `
         <!DOCTYPE html>
@@ -173,4 +173,5 @@ app.get('/view-users', async (req, res) => {
     }
   });
   
+
 module.exports = app;
