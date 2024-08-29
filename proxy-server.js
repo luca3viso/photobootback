@@ -8,10 +8,10 @@ const fs = require('fs').promises;
 const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
-const Redis = require('ioredis');
-const { kv } = require('@vercel/kv');
-const redis = new Redis(process.env.KV_URL);
-require('dotenv').config();
+//const Redis = require('ioredis');
+//const { kv } = require('@vercel/kv');
+//const redis = new Redis(process.env.KV_URL);
+//require('dotenv').config();
 
 console.log('Server starting...');
 
