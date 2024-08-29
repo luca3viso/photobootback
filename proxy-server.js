@@ -130,7 +130,7 @@ app.post('/validate-email', (req, res) => {
 app.get('/view-users', async (req, res) => {
   try {
     // Legge il file JSON
-    const filePath = path.join(__dirname, 'data', 'users.json');
+    const filePath = path.join(__dirname, 'public', 'users.json');
     const data = await fs.readFile(filePath, 'utf-8');
     const users = JSON.parse(data);
 
