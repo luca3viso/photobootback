@@ -7,7 +7,7 @@ const FormData = require('form-data');
 const validator = require('email-validator');
 const fs = require('fs').promises;
 const path = require('path');
-const sharp = require('sharp');
+//const sharp = require('sharp');
 const nodemailer = require('nodemailer');
 const Redis = require('ioredis');
 const redis = new Redis(process.env.REDIS_URL);
@@ -16,7 +16,7 @@ console.log('Server starting...');
 
 const API_KEY = process.env.API_KEY || 'faa557c1-c9dc-4b36-86d7-aa1f821448e1';
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
-const DB_FILE = path.join(__dirname, 'public', 'users.json'); // Modificato;
+const DB_FILE = path.join(__dirname,'users.json'); // Modificato;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
