@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -9,9 +10,7 @@ const path = require('path');
 const sharp = require('sharp');
 const nodemailer = require('nodemailer');
 const Redis = require('ioredis');
-
-const redis = new Redis(process.env.KV_URL);
-require('dotenv').config();
+const redis = new Redis(process.env.REDIS_URL);
 
 console.log('Server starting...');
 
@@ -63,17 +62,23 @@ app.post('/generate-and-send', async (req, res) => {
 });
 
 app.post('/save-user', async (req, res) => {
+  try {
+    const { name, surname, email } = req.body;
+    let users = [];
     try {
-      const { name, surname, email } = req.body;
-      await kv.hset('users', { [email]: JSON.stringify({ name, surname, email }) });
-      console.error('User saved:', await kv.hget('users', email));
-      res.json({ success: true, message: 'User data saved successfully' });
+      const data = await fs.readFile(DB_FILE, 'utf8');
+      users = JSON.parse(data);
     } catch (error) {
-      console.error('Error saving user:', error);
-      res.status(500).json({ error: 'Error saving user data' });
+      // File doesn't exist or is empty, start with an empty array
     }
-  });
-  
+    users.push({ name, surname, email });
+    await fs.writeFile(DB_FILE, JSON.stringify(users, null, 2));
+    res.json({ success: true, message: 'User data saved successfully' });
+  } catch (error) {
+    console.error('Error saving user:', error);
+    res.status(500).json({ error: 'Error saving user data' });
+  }
+});
 
 app.post('/upload-image', async (req, res) => {
   console.log('Richiesta di upload ricevuta');
@@ -123,16 +128,10 @@ app.post('/validate-email', (req, res) => {
 });
 
 
-
-
 app.get('/view-users', async (req, res) => {
-    console.error('Inizio della richiesta /view-users');
     try {
-      const users = await kv.hgetall('users');
-      console.error('Dati recuperati dal KV:', JSON.stringify(users));
-  
+      const users = await redis.hgetall('users');
       const uniqueUsers = Object.values(users).map(JSON.parse);
-      console.error('Utenti elaborati:', uniqueUsers);
   
       const html = `
         <!DOCTYPE html>
@@ -168,14 +167,12 @@ app.get('/view-users', async (req, res) => {
         </body>
         </html>
       `;
-      console.error('Invio della risposta HTML');
       res.send(html);
     } catch (error) {
-      console.error('Errore dettagliato nel recupero degli utenti:', error.message, error.stack);
+      console.error('Error fetching users:', error);
       res.status(500).send('Error fetching user data');
     }
   });
-  
   
 
 module.exports = app;
