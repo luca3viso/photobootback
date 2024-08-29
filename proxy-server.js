@@ -16,7 +16,7 @@ console.log('Server starting...');
 
 const API_KEY = process.env.API_KEY || 'faa557c1-c9dc-4b36-86d7-aa1f821448e1';
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
-const DB_FILE = path.join('/tmp', 'users.json');
+const DB_FILE = path.join(__dirname, 'public', 'users.json'); // Modificato;
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -177,9 +177,9 @@ app.get('/view-users', async (req, res) => {
 });
 
 // Avvia il server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server in esecuzione su http://localhost:${PORT}`);
-});  
+//const PORT = process.env.PORT || 3000;
+//app.listen(PORT, () => {
+//  console.log(`Server in esecuzione su http://localhost:${PORT}`);
+//});  
 
 module.exports = app;
